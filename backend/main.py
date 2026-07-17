@@ -1,5 +1,5 @@
 def main():
-    print("Hello from ai-ecosystem-workspace!")
+    print("Hello from backend!")
 
 
 if __name__ == "__main__":
