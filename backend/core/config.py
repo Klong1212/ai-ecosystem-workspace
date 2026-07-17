@@ -1,7 +1,9 @@
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings,SettingsConfigDict
+
+
 
 class Settings(BaseSettings):
     """Application settings."""
-    redis_url: str = "redis://localhost:6379"
-    postgres_url: str = "postgresql://postgres:postgres@localhost:5432/postgres"
-    label_studio_url: str = "http://localhost:8080"
+    
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
+    database_url: str
