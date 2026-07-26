@@ -12,14 +12,18 @@ services:
       - "6379:6379"
     volumes:
       - redis-data:/data
-    command: >
-      redis-server
-      --appendonly yes
+      - ./logs:/logs
+    command: sh -c "redis-server --appendonly yes 2>&1 | tee /logs/redis.log"
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   # -------------------------
   # ส่วนของ PostgreSQL
@@ -35,7 +39,15 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgresql-data:/var/lib/postgresql/data  # แก้ไขการย่อหน้าให้ตรงกับ ports
+      - postgresql-data:/var/lib/postgresql/data
+      - ./logs:/logs
+    command: postgres -c logging_collector=on -c log_directory=/logs -c log_filename=postgres.log
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
   label-studio:
     image: heartexlabs/label-studio:latest
     container_name: label-studio
@@ -50,6 +62,14 @@ services:
       - POSTGRES_USER=myuser
       - POSTGRES_PASSWORD=mypassword
       - POSTGRES_DB=mydatabase
+      - LOG_DIR=/logs
+    volumes:
+      - ./logs:/logs
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   # -------------------------
   # ส่วนของ MinIO (Object Storage)
@@ -67,11 +87,17 @@ services:
       - "9001:9001"
     volumes:
       - minio-data:/data
+      - ./logs:/logs
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 # -------------------------
-# ส่วนประกาศสร้าง Volumes 
+# ส่วนประกาศสร้าง Volumes
 # -------------------------
 volumes:
-  redis-data:       # สร้างฮาร์ดดิสก์จำลองให้ Redis
-  postgresql-data:    # สร้างฮาร์ดดิสก์จำลองให้ PostgreSQL
-  minio-data:         # สร้างฮาร์ดดิสก์จำลองให้ MinIO
+  redis-data:
+  postgresql-data:
+  minio-data:
