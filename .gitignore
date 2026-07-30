@@ -1,3 +1,4 @@
 sandbox
 backend\.venv
 logs
+/__pycache__/
