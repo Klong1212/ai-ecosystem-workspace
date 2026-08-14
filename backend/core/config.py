@@ -27,6 +27,13 @@ class Settings(BaseSettings):
     minio_secure: bool = False
     minio_profile_bucket: str = "profile-images"
 
+    # ── Redis ──
+    redis_url: str = "redis://localhost:6379"
+
+    # ── Label Studio ──
+    label_studio_url: str = "http://localhost:8080"
+    label_studio_api_key: str = ""
+
     # ── JWT ──
     jwt_secret_key: str = secrets.token_urlsafe(32)
     jwt_algorithm: str = "HS256"
